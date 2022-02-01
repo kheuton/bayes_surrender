@@ -85,18 +85,18 @@ def get_gameclock_multiplier(punt_df, year, is_playoffs):
         else:
             ot_length = 10
 
-    winning_or_tied_filter = punt_df['current_lead'] >=0
-    gameclock_filter = after_halftime_filter & winning_or_tied_filter
+    losing_or_tied_filter = punt_df['current_lead'] <=0
+    gameclock_filter = after_halftime_filter & losing_or_tied_filter
 
     punt_df.loc[:,'gameclock_minutes'] = punt_df['Time'].str.split(':').apply(lambda x: x[0]).astype(int)
     punt_df.loc[:,'gameclock_seconds'] = punt_df['Time'].str.split(':').apply(lambda x: x[1]).astype(int)
 
     punt_df.loc[:, 'seconds_since_halftime'] = 0
     punt_df.loc[after_halftime_filter, 'seconds_since_halftime'] = (punt_df.loc[after_halftime_filter,'Quarter']-3)*15*60 + \
-                                                                   (15 - punt_df.loc[after_halftime_filter,'gameclock_minutes']) *60+ \
+                                                                   (15 - punt_df.loc[after_halftime_filter,'gameclock_minutes']-1) *60+ \
                                                                    (60-punt_df.loc[after_halftime_filter,'gameclock_seconds'])
     punt_df.loc[ot_filter, 'seconds_since_halftime'] = (punt_df.loc[ot_filter,'Quarter']-3)*15*60 + \
-                                                                   (ot_length - punt_df.loc[ot_filter,'gameclock_minutes']) *60+ \
+                                                                   (ot_length - punt_df.loc[ot_filter,'gameclock_minutes']-1) *60+ \
                                                                    (60-punt_df.loc[ot_filter,'gameclock_seconds'])
     punt_df.loc[:,'gameclock_multiplier'] = 1
     punt_df.loc[gameclock_filter, 'gameclock_multiplier'] = (punt_df.loc[gameclock_filter, 'seconds_since_halftime']*0.001)**3+1
