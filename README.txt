@@ -1,6 +1,10 @@
 Code to scrape punting play-by-play data from pro-football-reference.com
 and calculate Jon Boi's Surrender Index.
 
+Authors:
+    Nate Nemeth
+    Kyle Heuton
+
 Requires:
   pandas
   html5lib
